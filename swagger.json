@@ -1,0 +1,235 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "API de Login e Campeões do LoL",
+      "version": "1.0.0",
+      "description": "API para autenticação de usuários e listagem de campeões do League of Legends."
+    },
+    "servers": [
+      {
+        "url": "http://localhost:3000",
+        "description": "Servidor Local"
+      }
+    ],
+    "components": {
+      "securitySchemes": {
+        "BearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    },
+    "security": [
+      {
+        "BearerAuth": []
+      }
+    ],
+    "paths": {
+      "/register": {
+        "post": {
+          "summary": "Registrar um novo usuário",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string", "example": "João Silva" },
+                    "birthDate": { "type": "string", "format": "date", "example": "1990-05-20" },
+                    "username": { "type": "string", "format": "email", "example": "joao.silva@email.com" },
+                    "password": { "type": "string", "example": "Senha@123" }
+                  },
+                  "required": ["name", "birthDate", "username", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Usuário registrado com sucesso"
+            },
+            "400": {
+              "description": "Erro de validação"
+            },
+            "409": {
+              "description": "Usuário já registrado"
+            }
+          }
+        }
+      },
+      "/login": {
+        "post": {
+          "summary": "Fazer login",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "username": { "type": "string", "format": "email", "example": "joao.silva@email.com" },
+                    "password": { "type": "string", "example": "Senha@123" }
+                  },
+                  "required": ["username", "password"]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Login realizado com sucesso",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "token": { "type": "string", "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Erro de validação do email"
+            },
+            "401": {
+              "description": "Credenciais inválidas"
+            }
+          }
+        }
+      },
+      "/champions": {
+        "get": {
+          "summary": "Listar todos os campeões",
+          "description": "Retorna todos os campeões do jogo, com a possibilidade de escolher a linguagem através de um parâmetro",
+          "parameters": [
+            {
+              "name": "lang",
+              "in": "query",
+              "description": "Idioma para os campeões (por padrão 'pt_BR').",
+              "required": false,
+              "type": "string",
+              "default": "pt_BR",
+              "enum": ["pt_BR", "en_US", "es_ES", "fr_FR", "de_DE", "it_IT"]
+            }
+          ],
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Lista de campeões",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": { "type": "string", "example": "Aatrox" },
+                        "name": { "type": "string", "example": "Aatrox" },
+                        "title": { "type": "string", "example": "the Darkin Blade" },
+                        "blurb": { "type": "string", "example": "Aatrox é um guerreiro..." },
+                        "images": {
+                        "type": "object",
+                        "properties": {
+                            "splash": { "type": "string", "example": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_0.jpg" },
+                            "icon": { "type": "string", "example": "https://ddragon.leagueoflegends.com/cdn/13.21.1/img/champion/Aatrox.png" },
+                            "loading": { "type": "string", "example": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_0.jpg" }
+                        }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Token inválido ou ausente"
+            }
+          }
+        }
+      },
+      "/champions/{name}": {
+        "get": {
+          "summary": "Obter detalhes de um campeão",
+          "description": "Retorna um campeao especifico do jogo, com a possibilidade de escolher a linguagem através de um parâmetro",
+          "security": [
+            {
+              "BearerAuth": []
+            }
+          ],
+          "parameters": [
+            {
+              "name": "name",
+              "in": "path",
+              "required": true,
+              "description": "Nome do campeão",
+              "schema": {
+                "type": "string",
+                "example": "Aatrox"
+              }
+            },
+            {
+                "name": "lang",
+                "in": "query",
+                "description": "Idioma para os campeões (por padrão 'pt_BR').",
+                "required": false,
+                "type": "string",
+                "default": "pt_BR",
+                "enum": ["pt_BR", "en_US", "es_ES", "fr_FR", "de_DE", "it_IT"]
+              }
+          ],
+          "responses": {
+            "200": {
+              "description": "Detalhes do campeão",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string", "example": "Aatrox" },
+                      "name": { "type": "string", "example": "Aatrox" },
+                      "title": { "type": "string", "example": "the Darkin Blade" },
+                      "lore": { "type": "string", "example": "Aatrox é um guerreiro..." },
+                      "images": {
+                        "type": "object",
+                        "properties": {
+                            "splash": { "type": "string", "example": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_0.jpg" },
+                            "icon": { "type": "string", "example": "https://ddragon.leagueoflegends.com/cdn/13.21.1/img/champion/Aatrox.png" },
+                            "loading": { "type": "string", "example": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_0.jpg" }
+                        }
+                        },
+                        "skins": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                "id": { "type": "string", "example": "266001" },
+                                "name": { "type": "string", "example": "Justicar Aatrox" },
+                                "splash": { "type": "string", "example": "https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_1.jpg" },
+                                "loading": { "type": "string", "example": "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/Aatrox_1.jpg" }
+                                }
+                            }
+                        }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "description": "Token inválido ou ausente"
+            },
+            "404": {
+              "description": "Campeão não encontrado"
+            }
+          }
+        }
+      }
+    }
+  }
+  
