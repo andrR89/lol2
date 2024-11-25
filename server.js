@@ -23,7 +23,7 @@ const BASE_URL = 'https://ddragon.leagueoflegends.com';
 
 // Função para validar a senha
 function validatePassword(password) {
-  const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/;
   return regex.test(password);
 }
 
