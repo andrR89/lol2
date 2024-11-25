@@ -6,8 +6,11 @@ const axios = require('axios');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json'); // Importa o arquivo do Swagger
 require('dotenv').config();
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
+
 app.use(bodyParser.json());
 
 const users = [];

@@ -6,6 +6,10 @@
       "description": "API para autenticação de usuários e listagem de campeões do League of Legends."
     },
     "servers": [
+        {
+            "url": "https://lol2-4vk5.onrender.com",
+            "description": "Render server"
+          },
       {
         "url": "http://localhost:3000",
         "description": "Servidor Local"
